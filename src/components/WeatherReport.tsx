@@ -11,7 +11,6 @@ import { UnitsContext } from '../context/UnitsContext.ts';
 export default function WeatherReport() {
   const [searchValue, setSearchValue] = useState('');
   const [searchNow, setSearchNow] = useState(false);
-  const [loaded, setLoaded] = useState(false);
 
   const [currentData, setCurrentData] =
     useState<Awaited<ReturnType<typeof fetchWeatherData>>>();
@@ -29,12 +28,6 @@ export default function WeatherReport() {
     },
     enabled: searchNow,
   });
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoaded(true);
-    }, 1);
-  }, []);
 
   useEffect(() => {
     if (data) {
@@ -56,7 +49,7 @@ export default function WeatherReport() {
   };
 
   return (
-    <main className={`${loaded ? 'loaded' : ''}`}>
+    <main className="loaded">
       <Grid2 container>
         <Grid2 size={12}>
           <Header
@@ -69,35 +62,31 @@ export default function WeatherReport() {
         <Grid2 size={12}>
           {currentData && currentData.cod === 200 ? (
             <div>
-              {isFetching ? (
-                <CircularProgress />
-              ) : (
-                <WeatherWidget
-                  info={{
-                    temperature: currentData.main.temp,
-                    feelsLike: currentData.main.feels_like,
-                    tempMax: currentData.main.temp_max,
-                    tempMin: currentData.main.temp_min,
-                    humidity: currentData.main.humidity,
-                    pressure: currentData.main.pressure,
-                    visibility: currentData.visibility,
-                    windSpeed: currentData.wind.speed,
-                    country: currentData.sys.country,
-                    sunrise: convertUTCToLocalTime(
-                      currentData.sys.sunrise,
-                      currentData.timezone,
-                    ),
-                    sunset: convertUTCToLocalTime(
-                      currentData.sys.sunset,
-                      currentData.timezone,
-                    ),
-                    clouds: currentData.clouds.all,
-                    snow: currentData.snow,
-                    rain: currentData.rain,
-                  }}
-                  city={currentData.name}
-                />
-              )}
+              <WeatherWidget
+                info={{
+                  temperature: currentData.main.temp,
+                  feelsLike: currentData.main.feels_like,
+                  tempMax: currentData.main.temp_max,
+                  tempMin: currentData.main.temp_min,
+                  humidity: currentData.main.humidity,
+                  pressure: currentData.main.pressure,
+                  visibility: currentData.visibility,
+                  windSpeed: currentData.wind.speed,
+                  country: currentData.sys.country,
+                  sunrise: convertUTCToLocalTime(
+                    currentData.sys.sunrise,
+                    currentData.timezone,
+                  ),
+                  sunset: convertUTCToLocalTime(
+                    currentData.sys.sunset,
+                    currentData.timezone,
+                  ),
+                  clouds: currentData.clouds.all,
+                  snow: currentData.snow,
+                  rain: currentData.rain,
+                }}
+                city={currentData.name}
+              />
             </div>
           ) : (
             <StyledBigParagraph>
@@ -106,6 +95,7 @@ export default function WeatherReport() {
                 : 'Search for a city to see what the weather is like'}
             </StyledBigParagraph>
           )}
+          {isFetching && <CircularProgress color="inherit" />}
         </Grid2>
       </Grid2>
     </main>

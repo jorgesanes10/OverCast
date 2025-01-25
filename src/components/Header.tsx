@@ -20,7 +20,7 @@ export default function Header({
   const { unit, toggle } = useContext(UnitsContext);
   return (
     <StyledHeader>
-      <Button
+      <StyledButton
         variant="outlined"
         color="inherit"
         onClick={() => {
@@ -28,8 +28,18 @@ export default function Header({
           cleanData();
         }}
       >
-        Use {unit === 'imperial' ? 'metric' : 'imperial'} system
-      </Button>
+        <div>
+          <span
+            className={`${unit === 'imperial' ? 'selected' : 'unselected'}`}
+          >
+            Imperial
+          </span>
+          &nbsp;/&nbsp;
+          <span className={`${unit === 'metric' ? 'selected' : 'unselected'}`}>
+            metric
+          </span>
+        </div>
+      </StyledButton>
       <form onSubmit={onFormSubmit}>
         <StyledTextField
           sx={{
@@ -96,5 +106,19 @@ const StyledTextField = styled(TextField)`
     &.Mui-focused fieldset {
       border-color: #fff;
     }
+  }
+`;
+
+const StyledButton = styled(Button)`
+  font-size: 12px !important;
+  font-weight: 100;
+
+  .selected {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .unselected {
+    opacity: 0.5;
   }
 `;
