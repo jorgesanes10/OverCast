@@ -15,7 +15,7 @@ import {
 import WidgetSm from './WidgetSm.tsx';
 import WidgetMaxMin from './WidgetMaxMin.tsx';
 import { useContext } from 'react';
-import { UnitsContext } from '../context/UnitsContext.ts';
+import { StoreContext } from '../context/storeContext.ts';
 
 interface WeatherWidgetProps {
   city: string;
@@ -42,7 +42,7 @@ interface WeatherWidgetProps {
 }
 
 export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
-  const { unit } = useContext(UnitsContext);
+  const { unit } = useContext(StoreContext);
 
   const degrees = `°${unit === 'imperial' ? 'F' : 'C'}`;
 

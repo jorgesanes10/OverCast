@@ -2,20 +2,25 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchWeatherData } from '../api';
 import { CircularProgress, Grid2 } from '@mui/material';
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from 'react';
-import WeatherWidget from './WeatherWidget.tsx';
+import WeatherWidget from '../components/WeatherWidget.tsx';
 import { convertUTCToLocalTime, getPreferredUnitOfMeasurement } from '../utils';
 import styled from 'styled-components';
-import Header from './Header.tsx';
-import { UnitsContext } from '../context/UnitsContext.ts';
+import Header from '../components/Header.tsx';
+import { StoreContext } from '../context/storeContext.ts';
+import { useLocation } from 'react-router';
 
 export default function WeatherReport() {
-  const [searchValue, setSearchValue] = useState('');
+  const location = useLocation();
+  const currentCity = location.search.split('?city=')[1];
+
+  const [searchValue, setSearchValue] = useState(currentCity || '');
+
   const [searchNow, setSearchNow] = useState(false);
 
   const [currentData, setCurrentData] =
     useState<Awaited<ReturnType<typeof fetchWeatherData>>>();
 
-  const { unit } = useContext(UnitsContext);
+  const { unit, addToSearchHistory } = useContext(StoreContext);
 
   const { data, isFetching } = useQuery({
     queryKey: [searchValue, unit],
@@ -32,8 +37,13 @@ export default function WeatherReport() {
   useEffect(() => {
     if (data) {
       setCurrentData(data);
+      addToSearchHistory(searchValue);
     }
   }, [data]);
+
+  useEffect(() => {
+    setSearchNow(true);
+  }, [currentCity]);
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchNow(false);
