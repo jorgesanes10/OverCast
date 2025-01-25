@@ -1,16 +1,21 @@
-import { getPreferredUnitOfMeasurement } from '../utils';
 import styled from 'styled-components';
 import { Grid2 } from '@mui/material';
 import {
+  AcUnit,
   Air,
   Cloud,
   CloudDownload,
   Thermostat,
   Visibility,
   Water,
+  WaterDrop,
   WbSunny,
   WbTwilight,
 } from '@mui/icons-material';
+import WidgetSm from './WidgetSm.tsx';
+import WidgetMaxMin from './WidgetMaxMin.tsx';
+import { useContext } from 'react';
+import { UnitsContext } from '../context/UnitsContext.ts';
 
 interface WeatherWidgetProps {
   city: string;
@@ -27,142 +32,176 @@ interface WeatherWidgetProps {
     sunset: string;
     clouds: number;
     country: string;
-    // rain?: number;
-    // snow?: number;
+    rain?: {
+      '1h': number;
+    };
+    snow?: {
+      '1h': number;
+    };
   };
 }
 
 export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
-  const degrees = `°${getPreferredUnitOfMeasurement() === 'imperial' ? 'F' : 'C'}`;
+  const { unit } = useContext(UnitsContext);
+
+  const degrees = `°${unit === 'imperial' ? 'F' : 'C'}`;
 
   return (
     <section>
       <article>
-        <PageTitle>
+        <PageTitle aria-label={`${city} ${info.country}`}>
           {city} ({info.country})
         </PageTitle>
-        <Grid2 container display="flex" alignItems="stretch">
-          <StyledGrid padding="16px" size={6}>
-            <TemperatureWrapper>
-              <PanelTitle>Temperature</PanelTitle>
-              <Grid2
-                size={12}
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                gap="50px"
-              >
-                <div>
-                  <Temperature>
-                    <Thermostat color="warning" />
-                    {info.temperature} <small>{degrees}</small>
-                  </Temperature>
-                  <Secondary>
-                    Feels like
-                    <span>
-                      {info.feelsLike} <small>{degrees}</small>
-                    </span>
-                  </Secondary>
-                </div>
-                <div>
-                  <Secondary>
-                    Max
-                    <span>
-                      <StyledThermostatIcon color="error" />
-                      {info.tempMax} <small>{degrees}</small>
-                    </span>
-                  </Secondary>
-                  <Secondary>
-                    Min
-                    <span>
-                      <StyledThermostatIcon color="info" />
-                      {info.tempMin} <small>{degrees}</small>
-                    </span>
-                  </Secondary>
-                </div>
-              </Grid2>
-            </TemperatureWrapper>
+        <Grid2 container>
+          <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
+            <WidgetSm
+              label="Temperature"
+              value={
+                <>
+                  {info.temperature} <small>{degrees}</small>
+                </>
+              }
+              ariaLabel={`Temperature: ${info.temperature} ${degrees}`}
+              icon={<Thermostat />}
+            />
           </StyledGrid>
-          <StyledGrid padding="16px" size={6}>
-            <div>
-              <PanelTitle>Other conditions</PanelTitle>
-              <Grid2
-                size={12}
-                display="flex"
-                gap="30px"
-                justifyContent="center"
-              >
-                <Secondary>
-                  Humidity
-                  <span>
-                    <StyledHumidityIcon color="info" />
-                    {info.humidity}
-                    <small>%</small>
-                  </span>
-                </Secondary>
-                <Secondary>
-                  Atm. Pressure
-                  <span>
-                    <StyledPressureIcon />
-                    {info.pressure} <small>hPa</small>
-                  </span>
-                </Secondary>
-              </Grid2>
-              <Grid2
-                size={12}
-                display="flex"
-                gap="30px"
-                justifyContent="center"
-              >
-                <Secondary>
-                  Visibility
-                  <span>
-                    <StyledVisibilityIcon />
-                    {info.visibility / 1000}
-                    <small>km</small>
-                  </span>
-                </Secondary>
-                <Secondary>
-                  Wind speed
-                  <span>
-                    <StyledAirIcon color="info" />
-                    {info.windSpeed}{' '}
-                    <small>
-                      {getPreferredUnitOfMeasurement() === 'imperial'
-                        ? 'mph'
-                        : 'm/s'}
-                    </small>
-                  </span>
-                </Secondary>
-              </Grid2>
-            </div>
+          <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
+            <WidgetSm
+              label="Feels like"
+              value={
+                <>
+                  {info.feelsLike} <small>{degrees}</small>
+                </>
+              }
+              ariaLabel={`Feels like ${info.feelsLike} ${degrees}`}
+              icon={<Thermostat />}
+            />
           </StyledGrid>
-          <StyledGrid size={12}>
-            <div>
-              <Secondary>
-                Cloudiness
-                <span>
-                  <Cloud color="info" />
+          <StyledGrid size={{ xs: 12, md: 6 }}>
+            <WidgetMaxMin
+              maxTemperature={
+                <>
+                  {info.tempMax} <small>{degrees}</small>
+                </>
+              }
+              minTemperature={
+                <>
+                  {info.tempMin} <small>{degrees}</small>
+                </>
+              }
+              ariaLabel={`Min temperature: ${info.tempMin} ${degrees}. Max temperature: ${info.tempMax} ${degrees}`}
+            />
+          </StyledGrid>
+          <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
+            <WidgetSm
+              label="Humidity"
+              value={
+                <>
+                  {info.humidity}
+                  <small>%</small>
+                </>
+              }
+              ariaLabel={`Humidity: ${info.humidity}%`}
+              icon={<Water />}
+            />
+          </StyledGrid>
+          <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
+            <WidgetSm
+              label="Atm. pressure"
+              value={
+                <>
+                  {info.pressure} <small>hPa</small>
+                </>
+              }
+              ariaLabel={`Atmospheric pressure: ${info.pressure} hPa`}
+              icon={<CloudDownload />}
+            />
+          </StyledGrid>
+          <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
+            <WidgetSm
+              label="Visibility"
+              value={
+                <>
+                  {info.visibility / 1000}
+                  <small>km</small>
+                </>
+              }
+              ariaLabel={`Visibility: ${info.visibility / 1000} km`}
+              icon={<Visibility />}
+            />
+          </StyledGrid>
+          <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
+            <WidgetSm
+              label="Wind speed"
+              value={
+                <>
+                  {info.windSpeed}{' '}
+                  <small>{unit === 'imperial' ? 'mph' : 'm/s'}</small>
+                </>
+              }
+              ariaLabel={`Wind speed: ${info.windSpeed} ${
+                unit === 'imperial' ? 'mph' : 'm/s'
+              }`}
+              icon={<Air />}
+            />
+          </StyledGrid>
+          <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
+            <WidgetSm
+              label="Cloudiness"
+              value={
+                <>
                   {info.clouds}
                   <small>%</small>
-                </span>
-              </Secondary>
-              <Secondary>
-                Sunrise{' '}
-                <span>
-                  <WbSunny color="warning" />
-                  {info.sunrise}
-                </span>
-              </Secondary>
-              <Secondary>
-                Sunset{' '}
-                <span>
-                  <WbTwilight color="warning" />
-                  {info.sunset}
-                </span>
-              </Secondary>
-            </div>
+                </>
+              }
+              ariaLabel={`Cloudiness: ${info.clouds}%`}
+              icon={<Cloud />}
+            />
           </StyledGrid>
+          <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
+            <WidgetSm
+              label="Sunrise"
+              value={<>{info.sunrise}</>}
+              ariaLabel={`Sunrise at ${info.sunrise}`}
+              icon={<WbSunny />}
+            />
+          </StyledGrid>
+          <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
+            <WidgetSm
+              label="Sunset"
+              value={<>{info.sunset}</>}
+              ariaLabel={`Sunset at ${info.sunset}`}
+              icon={<WbTwilight />}
+            />
+          </StyledGrid>
+          {info.rain && (
+            <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
+              <WidgetSm
+                label="Rain"
+                value={
+                  <>
+                    {info.rain['1h']} <small>mm/h</small>
+                  </>
+                }
+                ariaLabel={`Rain: ${info.rain['1h']} millimeters per hour`}
+                icon={<WaterDrop />}
+              />
+            </StyledGrid>
+          )}
+          {info.snow && (
+            <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
+              <WidgetSm
+                label="Snow"
+                value={
+                  <>
+                    {info.snow['1h']} <small>mm/h</small>
+                  </>
+                }
+                ariaLabel={`Snow: ${info.snow['1h']} millimeters per hour`}
+                icon={<AcUnit />}
+              />
+            </StyledGrid>
+          )}
         </Grid2>
       </article>
     </section>
@@ -172,79 +211,9 @@ export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
 const PageTitle = styled.h1`
   font-size: 30px;
   font-weight: 100;
-`;
-
-const PanelTitle = styled.h2`
-  font-weight: 100;
-`;
-
-const TemperatureWrapper = styled.div`
-  //height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  border-radius: 8px;
-`;
-
-const Temperature = styled.p`
-  font-size: 38px;
-  margin: 0;
-  text-align: left;
-`;
-
-const Secondary = styled.p`
-  font-size: 16px;
-  text-align: center;
-
-  display: flex;
-  flex-basis: 50%;
-  flex-direction: column;
-  margin: 8px 0;
-
-  color: #444;
-
-  span {
-    color: #111;
-    font-size: 21px;
-  }
+  color: #fff;
 `;
 
 const StyledGrid = styled(Grid2)`
-  background-image: linear-gradient(120deg, #a1c4fd60 0%, #c2e9fb60 100%);
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-`;
-
-const StyledThermostatIcon = styled(Thermostat)`
-  position: relative;
-  top: 4px;
-  font-size: 21px;
-`;
-
-const StyledAirIcon = styled(Air)`
-  position: relative;
-  top: 4px;
-  font-size: 21px;
-`;
-
-const StyledVisibilityIcon = styled(Visibility)`
-  position: relative;
-  top: 3px;
-  margin-right: 3px;
-  font-size: 19px;
-`;
-
-const StyledHumidityIcon = styled(Water)`
-  position: relative;
-  top: 3px;
-  margin-right: 3px;
-  font-size: 21px;
-`;
-
-const StyledPressureIcon = styled(CloudDownload)`
-  position: relative;
-  top: 3px;
-  margin-right: 4px;
-  font-size: 18px;
+  padding: 5px;
 `;

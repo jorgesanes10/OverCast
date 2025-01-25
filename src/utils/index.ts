@@ -12,5 +12,5 @@ export const convertUTCToLocalTime = (utc: number, timezoneOffset: number) => {
   return localSunriseTime.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
-  }); // Format as HH:mm
+  });
 };

@@ -1,89 +1,110 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchWeatherData } from '../api';
-import { CircularProgress, Grid2, TextField } from '@mui/material';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { CircularProgress, Grid2 } from '@mui/material';
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from 'react';
 import WeatherWidget from './WeatherWidget.tsx';
 import { convertUTCToLocalTime, getPreferredUnitOfMeasurement } from '../utils';
+import styled from 'styled-components';
+import Header from './Header.tsx';
+import { UnitsContext } from '../context/UnitsContext.ts';
 
 export default function WeatherReport() {
   const [searchValue, setSearchValue] = useState('');
   const [searchNow, setSearchNow] = useState(false);
+  const [currentData, setCurrentData] =
+    useState<Awaited<ReturnType<typeof fetchWeatherData>>>();
 
-  const { isPending, error, data, isFetching } = useQuery({
-    queryKey: [searchValue],
+  const { unit } = useContext(UnitsContext);
+
+  const { data, isFetching } = useQuery({
+    queryKey: [searchValue, unit],
     queryFn: async () => {
       setSearchNow(false);
       return await fetchWeatherData(
         searchValue,
-        getPreferredUnitOfMeasurement(),
+        unit || getPreferredUnitOfMeasurement(),
       );
     },
     enabled: searchNow,
   });
 
-  console.log(searchNow);
+  useEffect(() => {
+    if (data) {
+      setCurrentData(data);
+    }
+  }, [data]);
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchNow(false);
     setSearchValue(event.target.value);
   };
 
   const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setSearchNow(true);
+    if (searchValue) {
+      setSearchNow(true);
+    }
   };
-
-  console.log(data);
 
   return (
     <main>
       <Grid2 container>
         <Grid2 size={12}>
-          <header>
-            <form onSubmit={handleFormSubmit}>
-              <TextField
-                value={searchValue}
-                onChange={handleSearchChange}
-                variant="outlined"
-                placeholder="Search for a city..."
-              />
-            </form>
-          </header>
+          <Header
+            onFormSubmit={handleFormSubmit}
+            onSearchChange={handleSearchChange}
+            searchValue={searchValue}
+            cleanData={() => setCurrentData(null)}
+          />
         </Grid2>
         <Grid2 size={12}>
-          {data && (
+          {currentData && currentData.cod === 200 ? (
             <div>
               {isFetching ? (
                 <CircularProgress />
               ) : (
                 <WeatherWidget
                   info={{
-                    temperature: data.main.temp,
-                    feelsLike: data.main.feels_like,
-                    tempMax: data.main.temp_max,
-                    tempMin: data.main.temp_min,
-                    humidity: data.main.humidity,
-                    pressure: data.main.pressure,
-                    visibility: data.visibility,
-                    windSpeed: data.wind.speed,
-                    country: data.sys.country,
+                    temperature: currentData.main.temp,
+                    feelsLike: currentData.main.feels_like,
+                    tempMax: currentData.main.temp_max,
+                    tempMin: currentData.main.temp_min,
+                    humidity: currentData.main.humidity,
+                    pressure: currentData.main.pressure,
+                    visibility: currentData.visibility,
+                    windSpeed: currentData.wind.speed,
+                    country: currentData.sys.country,
                     sunrise: convertUTCToLocalTime(
-                      data.sys.sunrise,
-                      data.timezone,
+                      currentData.sys.sunrise,
+                      currentData.timezone,
                     ),
                     sunset: convertUTCToLocalTime(
-                      data.sys.sunset,
-                      data.timezone,
+                      currentData.sys.sunset,
+                      currentData.timezone,
                     ),
-                    clouds: data.clouds.all,
+                    clouds: currentData.clouds.all,
+                    snow: currentData.snow,
+                    rain: currentData.rain,
                   }}
-                  city={data.name}
+                  city={currentData.name}
                 />
               )}
             </div>
+          ) : (
+            <StyledBigParagraph>
+              {currentData && currentData.cod === '404'
+                ? 'City not found. Try again with another search term.'
+                : 'Search for a city to see what the weather is like'}
+            </StyledBigParagraph>
           )}
         </Grid2>
       </Grid2>
     </main>
   );
 }
+
+const StyledBigParagraph = styled.p`
+  font-size: 36px;
+  font-weight: 100;
+`;
