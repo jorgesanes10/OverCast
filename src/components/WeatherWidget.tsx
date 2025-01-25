@@ -52,7 +52,7 @@ export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
         <PageTitle aria-label={`${city} ${info.country}`}>
           {city} ({info.country})
         </PageTitle>
-        <Grid2 container>
+        <Grid2 container className="widgets-container">
           <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
             <WidgetSm
               label="Temperature"

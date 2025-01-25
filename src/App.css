@@ -5,3 +5,72 @@
   text-align: center;
 }
 
+.loaded .widget {
+  animation: 0.5s ease-out 1 fadeIn;
+  animation-fill-mode: forwards;
+}
+
+.widgets-container > div:nth-child(1) .widget {
+  animation-delay: 50ms;
+}
+
+.widgets-container > div:nth-child(2) .widget {
+  animation-delay: 100ms;
+}
+
+.widgets-container > div:nth-child(3) .widget {
+  animation-delay: 150ms;
+}
+
+.widgets-container > div:nth-child(4) .widget {
+  animation-delay: 200ms;
+}
+
+.widgets-container > div:nth-child(5) .widget {
+  animation-delay: 250ms;
+}
+
+.widgets-container > div:nth-child(6) .widget {
+  animation-delay: 300ms;
+}
+
+.widgets-container > div:nth-child(7) .widget {
+  animation-delay: 350ms;
+}
+
+.widgets-container > div:nth-child(8) .widget {
+  animation-delay: 400ms;
+}
+
+.widgets-container > div:nth-child(9) .widget {
+  animation-delay: 450ms;
+}
+
+.widgets-container > div:nth-child(10) .widget {
+  animation-delay: 500ms;
+}
+
+.widgets-container > div:nth-child(11) .widget {
+  animation-delay: 550ms;
+}
+
+.widgets-container > div:nth-child(12) .widget {
+  animation-delay: 600ms;
+}
+
+.widget {
+  transform: translateY(60px);
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  0% {
+    transform: translateY(60px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

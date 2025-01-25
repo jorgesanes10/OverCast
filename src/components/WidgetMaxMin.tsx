@@ -15,7 +15,7 @@ export default function WidgetMaxMin({
   ariaLabel,
 }: WidgetMaxMinProps) {
   return (
-    <StyledWidgetMaxMin aria-label={ariaLabel} container>
+    <StyledWidgetMaxMin className="widget" aria-label={ariaLabel} container>
       <Grid2 aria-hidden>
         <p>
           <Thermostat /> Min

@@ -15,7 +15,7 @@ export default function WidgetSm({
   ariaLabel,
 }: WidgetSmProps) {
   return (
-    <StyledWidgetSm aria-label={ariaLabel}>
+    <StyledWidgetSm aria-label={ariaLabel} className="widget">
       <div aria-hidden>
         <p>
           {icon} {label}

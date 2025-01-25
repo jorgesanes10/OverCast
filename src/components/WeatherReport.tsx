@@ -11,6 +11,8 @@ import { UnitsContext } from '../context/UnitsContext.ts';
 export default function WeatherReport() {
   const [searchValue, setSearchValue] = useState('');
   const [searchNow, setSearchNow] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
   const [currentData, setCurrentData] =
     useState<Awaited<ReturnType<typeof fetchWeatherData>>>();
 
@@ -27,6 +29,12 @@ export default function WeatherReport() {
     },
     enabled: searchNow,
   });
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoaded(true);
+    }, 1);
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -48,7 +56,7 @@ export default function WeatherReport() {
   };
 
   return (
-    <main>
+    <main className={`${loaded ? 'loaded' : ''}`}>
       <Grid2 container>
         <Grid2 size={12}>
           <Header
