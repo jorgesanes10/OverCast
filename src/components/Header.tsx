@@ -1,9 +1,9 @@
-import { Button, Grid2 } from '@mui/material';
+import { Grid2 } from '@mui/material';
 import styled from 'styled-components';
-import { ChangeEvent, FormEvent, useContext } from 'react';
-import { StoreContext } from '../context/storeContext.ts';
+import { ChangeEvent, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import SearchForm from './SearchForm.tsx';
+import UnitButton from './UnitButton.tsx';
 
 interface HeaderProps {
   searchValue: string;
@@ -18,8 +18,6 @@ export default function Header({
   onFormSubmit,
   cleanData,
 }: HeaderProps) {
-  const { unit, toggleUnit } = useContext(StoreContext);
-
   return (
     <StyledHeader>
       <Grid2 container>
@@ -36,30 +34,7 @@ export default function Header({
             sm: '0',
           }}
         >
-          <StyledButton
-            variant="outlined"
-            color="inherit"
-            onClick={() => {
-              toggleUnit();
-              cleanData();
-            }}
-            aria-label={`Change to ${unit === 'imperial' ? 'metric' : 'imperial'} units`}
-            data-testid="units-button"
-          >
-            <div>
-              <span
-                className={`${unit === 'imperial' ? 'selected' : 'unselected'}`}
-              >
-                Imperial
-              </span>
-              &nbsp;/&nbsp;
-              <span
-                className={`${unit === 'metric' ? 'selected' : 'unselected'}`}
-              >
-                metric
-              </span>
-            </div>
-          </StyledButton>
+          <UnitButton cleanData={cleanData} />
           <StyledLink to="/favorites" data-testid="favorites-link">
             Favorites
           </StyledLink>
@@ -86,20 +61,6 @@ export default function Header({
 const StyledHeader = styled.header`
   //display: flex;
   //justify-content: space-between;
-`;
-
-const StyledButton = styled(Button)`
-  font-size: 12px !important;
-  font-weight: 100;
-
-  .selected {
-    font-size: 14px;
-    font-weight: 600;
-  }
-
-  .unselected {
-    opacity: 0.5;
-  }
 `;
 
 const StyledLink = styled(Link)`

@@ -9,19 +9,17 @@ import Header from '../components/Header.tsx';
 import { StoreContext } from '../context/storeContext.ts';
 import { useLocation } from 'react-router';
 
-type Conditions = 'Clear' | 'Clouds' | 'Rain' | 'Snow';
-
 export default function WeatherReport() {
   const location = useLocation();
 
   const [searchValue, setSearchValue] = useState('');
   const [searchNow, setSearchNow] = useState(false);
-  const [conditions, setConditions] = useState<Conditions>('Clear');
 
   const [currentData, setCurrentData] =
     useState<Awaited<ReturnType<typeof fetchWeatherData>>>();
 
-  const { unit, addToSearchHistory } = useContext(StoreContext);
+  const { unit, addToSearchHistory, conditions, setConditions } =
+    useContext(StoreContext);
 
   const { data, isFetching } = useQuery({
     queryKey: [searchValue, unit],
@@ -49,9 +47,7 @@ export default function WeatherReport() {
 
   useEffect(() => {
     setSearchValue(location.search.split('?city=')[1] || '');
-    if (searchValue) {
-      setSearchNow(true);
-    }
+    setSearchNow(true);
   }, [location]);
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {

@@ -44,14 +44,19 @@ interface WeatherWidgetProps {
 }
 
 export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
-  const { unit, favorites, toggleFavorite } = useContext(StoreContext);
+  const { unit, favorites, toggleFavorite, conditions } =
+    useContext(StoreContext);
 
   const degrees = `°${unit === 'imperial' ? 'F' : 'C'}`;
 
   return (
     <section>
       <article>
-        <PageTitle aria-label={`${city} ${info.country}`} data-testid="title">
+        <PageTitle
+          aria-label={`${city} ${info.country}`}
+          data-testid="title"
+          style={{ marginBottom: '10px' }}
+        >
           {city} ({info.country}){' '}
           <Button
             variant="text"
@@ -67,6 +72,7 @@ export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
             {favorites.includes(city) ? <Favorite /> : <FavoriteBorder />}
           </Button>
         </PageTitle>
+        <PageTitle style={{ marginTop: 0 }}>{conditions}</PageTitle>
         <Grid2 container className="widgets-container">
           <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>
             <WidgetSm
