@@ -3,19 +3,25 @@ import { fetchWeatherData } from '../api';
 import { CircularProgress, Grid2 } from '@mui/material';
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from 'react';
 import WeatherWidget from '../components/WeatherWidget.tsx';
-import { convertUTCToLocalTime, getPreferredUnitOfMeasurement } from '../utils';
+import {
+  convertUTCToLocalTime,
+  getCurrentCityTime,
+  getPreferredUnitOfMeasurement,
+} from '../utils';
 import styled from 'styled-components';
 import Header from '../components/Header.tsx';
 import { StoreContext } from '../context/storeContext.ts';
 import { useLocation } from 'react-router';
 
+type Conditions = 'Clear' | 'Clouds' | 'Rain' | 'Snow';
+
 export default function WeatherReport() {
   const location = useLocation();
+
   const currentCity = location.search.split('?city=')[1];
-
   const [searchValue, setSearchValue] = useState(currentCity || '');
-
   const [searchNow, setSearchNow] = useState(false);
+  const [conditions, setConditions] = useState<Conditions>('Clear');
 
   const [currentData, setCurrentData] =
     useState<Awaited<ReturnType<typeof fetchWeatherData>>>();
@@ -35,11 +41,16 @@ export default function WeatherReport() {
   });
 
   useEffect(() => {
-    if (data) {
+    if (data && data.cod === 200) {
       setCurrentData(data);
+      setConditions(data.weather[0].main);
       addToSearchHistory(searchValue);
     }
   }, [data]);
+
+  useEffect(() => {
+    document.body.className = conditions;
+  }, [conditions]);
 
   useEffect(() => {
     setSearchNow(true);
@@ -57,6 +68,8 @@ export default function WeatherReport() {
       setSearchNow(true);
     }
   };
+
+  console.log(getCurrentCityTime(currentData && currentData.dt));
 
   return (
     <main className="loaded">

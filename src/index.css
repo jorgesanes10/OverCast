@@ -3,7 +3,19 @@
 }
 
 body {
-    background-image: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12);
+    background: linear-gradient(45deg, hsla(217, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);
     min-height: 100vh;
     color: #fff;
+}
+
+body.Clouds {
+    background: linear-gradient(45deg, hsla(217, 100%, 28%, 1) 0%, hsla(187, 43%, 79%, 1) 100%);
+}
+
+body.Rain {
+    background: linear-gradient(45deg, hsla(217, 100%, 28%, 1) 0%, hsla(187, 58%, 56%, 1) 100%);
+}
+
+body.Snow {
+    background: linear-gradient(45deg, hsla(217, 68%, 23%, 1) 0%, hsla(0, 0%, 70%, 1) 100%);
 }

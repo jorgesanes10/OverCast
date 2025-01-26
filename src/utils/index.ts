@@ -7,9 +7,18 @@ export const getPreferredUnitOfMeasurement = () => {
 };
 
 export const convertUTCToLocalTime = (utc: number, timezoneOffset: number) => {
-  const localSunriseTime = new Date(utc * 1000 - timezoneOffset);
+  const localTime = new Date(utc * 1000 - timezoneOffset);
 
-  return localSunriseTime.toLocaleTimeString([], {
+  return localTime.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
+export const getCurrentCityTime = (utc: number) => {
+  const cityTime = new Date(utc * 1000);
+
+  return cityTime.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
   });
