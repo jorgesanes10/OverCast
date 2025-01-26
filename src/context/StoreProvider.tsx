@@ -4,6 +4,7 @@ import { StoreContext } from './storeContext.ts';
 export default function StoreProvider({ children }: { children: ReactNode }) {
   const [unit, setUnit] = useState('imperial');
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([]);
 
   const toggleUnit = () => {
     setUnit((prevUnit) => (prevUnit === 'imperial' ? 'metric' : 'imperial'));
@@ -19,9 +20,26 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const toggleFavorite = (city: string) => {
+    setFavorites((prevFavorites) => {
+      if (!prevFavorites.includes(city)) {
+        return [...prevFavorites, city];
+      }
+
+      return prevFavorites.filter((item) => item !== city);
+    });
+  };
+
   return (
     <StoreContext.Provider
-      value={{ unit, toggleUnit, searchHistory, addToSearchHistory }}
+      value={{
+        unit,
+        toggleUnit,
+        searchHistory,
+        addToSearchHistory,
+        favorites,
+        toggleFavorite,
+      }}
     >
       {children}
     </StoreContext.Provider>

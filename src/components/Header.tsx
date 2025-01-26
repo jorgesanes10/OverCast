@@ -1,9 +1,9 @@
-import { Button, Grid2, TextField } from '@mui/material';
-import { Search } from '@mui/icons-material';
+import { Button, Grid2 } from '@mui/material';
 import styled from 'styled-components';
 import { ChangeEvent, FormEvent, useContext } from 'react';
 import { StoreContext } from '../context/storeContext.ts';
 import { Link } from 'react-router-dom';
+import SearchForm from './SearchForm.tsx';
 
 interface HeaderProps {
   searchValue: string;
@@ -19,6 +19,7 @@ export default function Header({
   cleanData,
 }: HeaderProps) {
   const { unit, toggleUnit } = useContext(StoreContext);
+
   return (
     <StyledHeader>
       <Grid2 container>
@@ -58,7 +59,7 @@ export default function Header({
               </span>
             </div>
           </StyledButton>
-          <StyledLink to="/history">Search history</StyledLink>
+          <StyledLink to="/favorites">Favorites</StyledLink>
         </Grid2>
         <Grid2
           size={{ xs: 12, sm: 8 }}
@@ -68,40 +69,11 @@ export default function Header({
             sm: 'flex-end',
           }}
         >
-          <StyledForm onSubmit={onFormSubmit}>
-            <StyledTextField
-              sx={{
-                '&:hover': {
-                  borderColor: '#fff',
-                },
-                '&:focused': {
-                  borderColor: '#fff',
-                },
-              }}
-              color="secondary"
-              value={searchValue}
-              onChange={onSearchChange}
-              variant="outlined"
-              placeholder="Search for a city..."
-            />
-            <Button
-              sx={{
-                padding: '15px',
-                borderColor: '#fff',
-                color: '#fff',
-                position: 'relative',
-                left: '-1px',
-                borderTopLeftRadius: '0',
-                borderBottomLeftRadius: '0',
-              }}
-              aria-label="Search"
-              type="submit"
-              variant="outlined"
-              color="secondary"
-            >
-              <Search />
-            </Button>
-          </StyledForm>
+          <SearchForm
+            searchValue={searchValue}
+            onSearchChange={onSearchChange}
+            onFormSubmit={onFormSubmit}
+          />
         </Grid2>
       </Grid2>
     </StyledHeader>
@@ -111,32 +83,6 @@ export default function Header({
 const StyledHeader = styled.header`
   //display: flex;
   //justify-content: space-between;
-`;
-
-const StyledTextField = styled(TextField)`
-  input {
-    color: #fff;
-  }
-
-  fieldset {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-color: #fff;
-  }
-
-  & .MuiInputBase-root:hover {
-    border-color: #fff;
-  }
-
-  & .MuiInputBase-root:hover fieldset {
-    border-color: #fff;
-  }
-
-  & .MuiOutlinedInput-root {
-    &.Mui-focused fieldset {
-      border-color: #fff;
-    }
-  }
 `;
 
 const StyledButton = styled(Button)`
@@ -151,11 +97,6 @@ const StyledButton = styled(Button)`
   .unselected {
     opacity: 0.5;
   }
-`;
-
-const StyledForm = styled.form`
-  display: flex;
-  flex-wrap: nowrap;
 `;
 
 const StyledLink = styled(Link)`

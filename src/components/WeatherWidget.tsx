@@ -1,10 +1,12 @@
 import styled from 'styled-components';
-import { Grid2 } from '@mui/material';
+import { Button, Grid2 } from '@mui/material';
 import {
   AcUnit,
   Air,
   Cloud,
   CloudDownload,
+  Favorite,
+  FavoriteBorder,
   Thermostat,
   Visibility,
   Water,
@@ -42,7 +44,7 @@ interface WeatherWidgetProps {
 }
 
 export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
-  const { unit } = useContext(StoreContext);
+  const { unit, favorites, toggleFavorite } = useContext(StoreContext);
 
   const degrees = `°${unit === 'imperial' ? 'F' : 'C'}`;
 
@@ -50,7 +52,19 @@ export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
     <section>
       <article>
         <PageTitle aria-label={`${city} ${info.country}`}>
-          {city} ({info.country})
+          {city} ({info.country}){' '}
+          <Button
+            variant="text"
+            onClick={() => toggleFavorite(city)}
+            sx={{ color: '#fff' }}
+            aria-label={
+              favorites.includes(city)
+                ? 'Remove from favorites'
+                : 'Add to favorites'
+            }
+          >
+            {favorites.includes(city) ? <Favorite /> : <FavoriteBorder />}
+          </Button>
         </PageTitle>
         <Grid2 container className="widgets-container">
           <StyledGrid size={{ xs: 12, sm: 4, md: 3 }}>

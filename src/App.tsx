@@ -2,7 +2,7 @@ import './App.css';
 import WeatherReport from './pages/WeatherReport.tsx';
 import { BrowserRouter, Routes } from 'react-router-dom';
 import { Route } from 'react-router';
-import SearchHistory from './pages/SearchHistory.tsx';
+import Favorites from './pages/Favorites.tsx';
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<WeatherReport />} />
-          <Route path="/history" element={<SearchHistory />} />
+          <Route path="/favorites" element={<Favorites />} />
         </Routes>
       </BrowserRouter>
     </>

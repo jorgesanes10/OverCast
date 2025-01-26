@@ -7,4 +7,8 @@ export const StoreContext = createContext({
   addToSearchHistory: (term: string) => {
     console.log(term);
   },
+  favorites: [''],
+  toggleFavorite: (city: string) => {
+    console.log(city);
+  },
 });

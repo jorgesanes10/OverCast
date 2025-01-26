@@ -3,20 +3,23 @@ import { StoreContext } from '../context/storeContext.ts';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-export default function SearchHistory() {
-  const { searchHistory } = useContext(StoreContext);
+export default function Favorites() {
+  const { favorites } = useContext(StoreContext);
 
   return (
     <main>
-      <h1>Search history</h1>
-      {searchHistory.length === 0 && (
+      <StyledHeader>
+        <Link to="/">Back</Link>
+      </StyledHeader>
+      <h1>My favorites</h1>
+      {favorites.length === 0 && (
         <p>
-          There are no cities in your search history.{' '}
-          <StyledLink to="/">Search now</StyledLink>
+          You have no favorite cities.{' '}
+          <StyledLink to="/">Search now</StyledLink> to get started.
         </p>
       )}
       <StyledUl>
-        {searchHistory.map((city) => (
+        {favorites.map((city) => (
           <li key={city}>
             <Link to={`/?city=${city}`}>{city}</Link>
           </li>
@@ -43,4 +46,11 @@ const StyledUl = styled.ul`
 
 const StyledLink = styled(Link)`
   color: #fff;
+`;
+
+const StyledHeader = styled.header`
+  display: flex;
+  a {
+    color: #fff;
+  }
 `;
