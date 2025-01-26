@@ -156,13 +156,17 @@ const StyledForm = styled.form`
 
 const StyledDropdown = styled.div`
   position: absolute;
-  background-color: #ffffff50;
+  background-color: #11111180;
   top: 100%;
   width: 89%;
-  padding: 16px;
-  -webkit-backdrop-filter: blur(7px);
   z-index: 10;
   border-radius: 8px;
+  padding: 16px;
+
+  @supports (-webkit-backdrop-filter: blur(7px)) {
+    -webkit-backdrop-filter: blur(7px);
+    background-color: #ffffff50;
+  }
 
   opacity: 0;
   pointer-events: none;
