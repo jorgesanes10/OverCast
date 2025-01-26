@@ -48,8 +48,10 @@ export default function WeatherReport() {
   }, [conditions]);
 
   useEffect(() => {
-    setSearchValue(location.search.split('?city=')[1]);
-    setSearchNow(true);
+    setSearchValue(location.search.split('?city=')[1] || '');
+    if (searchValue) {
+      setSearchNow(true);
+    }
   }, [location]);
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
