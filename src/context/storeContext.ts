@@ -11,4 +11,8 @@ export const StoreContext = createContext({
   toggleFavorite: (city: string) => {
     console.log(city);
   },
+  conditions: '',
+  setConditions: (conditions: string) => {
+    console.log(conditions);
+  },
 });
