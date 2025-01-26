@@ -44,6 +44,7 @@ export default function Header({
               cleanData();
             }}
             aria-label={`Change to ${unit === 'imperial' ? 'metric' : 'imperial'} units`}
+            data-testid="units-button"
           >
             <div>
               <span
@@ -59,7 +60,9 @@ export default function Header({
               </span>
             </div>
           </StyledButton>
-          <StyledLink to="/favorites">Favorites</StyledLink>
+          <StyledLink to="/favorites" data-testid="favorites-link">
+            Favorites
+          </StyledLink>
         </Grid2>
         <Grid2
           size={{ xs: 12, sm: 8 }}

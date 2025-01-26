@@ -51,7 +51,7 @@ export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
   return (
     <section>
       <article>
-        <PageTitle aria-label={`${city} ${info.country}`}>
+        <PageTitle aria-label={`${city} ${info.country}`} data-testid="title">
           {city} ({info.country}){' '}
           <Button
             variant="text"
@@ -62,6 +62,7 @@ export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
                 ? 'Remove from favorites'
                 : 'Add to favorites'
             }
+            data-testid="favorite-button"
           >
             {favorites.includes(city) ? <Favorite /> : <FavoriteBorder />}
           </Button>

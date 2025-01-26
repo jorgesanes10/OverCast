@@ -21,7 +21,9 @@ export default function Favorites() {
       <StyledUl>
         {favorites.map((city) => (
           <li key={city}>
-            <Link to={`/?city=${city}`}>{city}</Link>
+            <Link to={`/?city=${city}`} data-testid={`favorite-link-${city}`}>
+              {city}
+            </Link>
           </li>
         ))}
       </StyledUl>

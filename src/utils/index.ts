@@ -14,12 +14,3 @@ export const convertUTCToLocalTime = (utc: number, timezoneOffset: number) => {
     minute: '2-digit',
   });
 };
-
-export const getCurrentCityTime = (utc: number) => {
-  const cityTime = new Date(utc * 1000);
-
-  return cityTime.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};

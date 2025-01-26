@@ -16,12 +16,16 @@ export default function SearchForm({
   onSearchChange,
   onFormSubmit,
 }: SearchFormProps) {
-  const [dropdownVisible, setDropdownVisible] = useState(false);
-
   const { searchHistory } = useContext(StoreContext);
+  const [historyToDisplay, setHistoryToDisplay] = useState(searchHistory);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   useEffect(() => {
     document.body.addEventListener('click', hideDropdown, true);
+
+    return () => {
+      document.body.removeEventListener('click', hideDropdown, true);
+    };
   }, []);
 
   const hideDropdown = (event: MouseEvent) => {
@@ -34,9 +38,27 @@ export default function SearchForm({
     }
   };
 
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = event.target.value;
+
+    if (onSearchChange) {
+      onSearchChange(event);
+    }
+
+    const newHistoryToDisplay = searchHistory.filter((item) =>
+      item.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+
+    setHistoryToDisplay(newHistoryToDisplay);
+  };
+
   const renderSearchHistory = () =>
-    searchHistory.map((city) => (
-      <Link key={city} to={`/?city=${city}`}>
+    historyToDisplay.map((city) => (
+      <Link
+        data-testid={`history-item-${city}`}
+        key={city}
+        to={`/?city=${city}`}
+      >
         {city}
       </Link>
     ));
@@ -54,7 +76,7 @@ export default function SearchForm({
         }}
         color="secondary"
         value={searchValue}
-        onChange={onSearchChange}
+        onChange={handleSearchChange}
         variant="outlined"
         placeholder="Search for a city..."
         onFocus={() => setDropdownVisible(true)}
@@ -67,6 +89,7 @@ export default function SearchForm({
         }}
         inputProps={{
           'data-keepdropdown': 'true',
+          'data-testid': 'search-field',
         }}
       />
       {searchHistory.length > 0 && (
