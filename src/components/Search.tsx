@@ -1,31 +1,36 @@
 import { Button, CircularProgress, TextField } from '@mui/material';
-import { Search } from '@mui/icons-material';
 import styled from 'styled-components';
-import { ChangeEvent, FormEvent, useContext, useEffect, useState } from 'react';
+import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 import { StoreContext } from '../context/storeContext.ts';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCitiesByName } from '../api';
 
-interface SearchFormProps {
-  searchValue: string;
-  onSearchChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  onFormSubmit: (event: FormEvent<HTMLFormElement>) => void;
-}
-
-export default function SearchForm({
-  onSearchChange,
-  onFormSubmit,
-}: SearchFormProps) {
+export default function Search() {
   const [searchValue, setSearchValue] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [searchNow, setSearchNow] = useState(false);
   const { setCurrentCity } = useContext(StoreContext);
+
+  const timeout = useRef(0);
 
   const { data, isFetching } = useQuery({
     queryKey: [searchValue],
     queryFn: async () => {
+      setSearchNow(false);
       return await fetchCitiesByName(searchValue);
     },
+    enabled: searchNow,
   });
+
+  useEffect(() => {
+    clearTimeout(timeout.current);
+
+    timeout.current = window.setTimeout(() => {
+      if (searchValue) {
+        setSearchNow(true);
+      }
+    }, 300);
+  }, [searchValue]);
 
   useEffect(() => {
     document.body.addEventListener('click', hideDropdown, true);
@@ -49,10 +54,6 @@ export default function SearchForm({
     const searchTerm = event.target.value;
 
     setSearchValue(searchTerm);
-
-    if (onSearchChange) {
-      onSearchChange(event);
-    }
   };
 
   type CitiesResponse = {
@@ -67,30 +68,31 @@ export default function SearchForm({
 
   const renderCities = () => {
     if (data.features) {
-      return data.features.map(({ properties }: CitiesResponse) => (
-        <Button
-          sx={{
-            color: '#fff',
-          }}
-          key={properties.placeId}
-          onClick={() =>
-            setCurrentCity({
-              name: properties.city,
-              lat: properties.lat,
-              lon: properties.lon,
-            })
-          }
-        >
-          {properties.city}, {properties.country}
-        </Button>
-      ));
+      return data.features.map(
+        ({ properties }: CitiesResponse, index: number) => (
+          <Button
+            sx={{
+              color: '#fff',
+            }}
+            key={`${properties.placeId}-${index}`}
+            data-testid={`cities-result-${index}`}
+            onClick={() =>
+              setCurrentCity({
+                name: properties.city,
+                lat: properties.lat,
+                lon: properties.lon,
+              })
+            }
+          >
+            {properties.city}, {properties.country}
+          </Button>
+        ),
+      );
     }
   };
 
-  console.log(data);
-
   return (
-    <StyledForm onSubmit={onFormSubmit}>
+    <StyledWrapper>
       <StyledTextField
         sx={{
           '&:hover': {
@@ -123,27 +125,17 @@ export default function SearchForm({
           data-keepdropdown="true"
           className={`${dropdownVisible ? 'dropdown-visible' : ''}`}
         >
-          <>{isFetching ? <CircularProgress /> : renderCities()}</>
+          <>
+            {data.features.length > 0 ? (
+              renderCities()
+            ) : (
+              <StyledSpan>No cities found</StyledSpan>
+            )}
+          </>
         </StyledDropdown>
       )}
-      <Button
-        sx={{
-          padding: '15px',
-          borderColor: '#fff',
-          color: '#fff',
-          position: 'relative',
-          left: '-1px',
-          borderTopLeftRadius: '0',
-          borderBottomLeftRadius: '0',
-        }}
-        aria-label="Search"
-        type="submit"
-        variant="outlined"
-        color="secondary"
-      >
-        <Search />
-      </Button>
-    </StyledForm>
+      <>{isFetching && <StyledCircularProgress size={30} color="inherit" />}</>
+    </StyledWrapper>
   );
 }
 
@@ -173,7 +165,7 @@ const StyledTextField = styled(TextField)`
   }
 `;
 
-const StyledForm = styled.form`
+const StyledWrapper = styled.div`
   display: flex;
   flex-wrap: nowrap;
   position: relative;
@@ -211,4 +203,18 @@ const StyledDropdown = styled.div`
   a:hover {
     text-decoration: underline;
   }
+`;
+
+const StyledSpan = styled.span`
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+`;
+
+const StyledCircularProgress = styled(CircularProgress)`
+  position: absolute;
+  right: 10px;
+  transform: scale(0.5);
+  top: 12px;
+  pointer-events: none;
 `;

@@ -14,3 +14,14 @@ export const convertUTCToLocalTime = (utc: number, timezoneOffset: number) => {
     minute: '2-digit',
   });
 };
+
+const formattedConditions: { [key: string]: string } = {
+  Clear: 'Clear',
+  Clouds: 'Cloudy',
+  Rain: 'Rainy',
+  Snow: 'Snowy',
+};
+
+export const getFormattedCondition = (condition: string): string => {
+  return formattedConditions[condition];
+};

@@ -8,10 +8,10 @@ import WidgetSm from '../components/WidgetSm.tsx';
 import { ArrowBack, Thermostat } from '@mui/icons-material';
 import { Grid2 } from '@mui/material';
 import UnitButton from '../components/UnitButton.tsx';
+import { getFormattedCondition } from '../utils';
 
 export default function Favorites() {
-  const { favorites, unit, conditions, setCurrentCity } =
-    useContext(StoreContext);
+  const { favorites, unit, setCurrentCity } = useContext(StoreContext);
 
   const navigate = useNavigate();
 
@@ -43,6 +43,8 @@ export default function Favorites() {
       )}
       <Grid2 container className="widgets-container">
         {cityQueries.map(({ data, isLoading }, index) => {
+          console.log('jajaja', data);
+
           if (!isLoading) {
             return (
               <Grid2
@@ -51,8 +53,7 @@ export default function Favorites() {
                 sx={{ padding: '5px' }}
               >
                 <StyledButton
-                  data-testid={`favorite-link-${data.name}`}
-                  // sx={{ padding: 0 }}
+                  data-testid={`favorite-item-${data.name}`}
                   onClick={() => {
                     setCurrentCity({
                       name: data.name,
@@ -64,7 +65,7 @@ export default function Favorites() {
                   }}
                 >
                   <WidgetSm
-                    label={`${data.name} (${conditions})`}
+                    label={`${data.name} (${getFormattedCondition(data.weather[0].main)})`}
                     value={
                       <>
                         {data.main.temp} <small>{degrees}</small>
@@ -99,6 +100,7 @@ const StyledHeader = styled.header`
 
 const StyledButton = styled.button`
   all: unset;
+  height: 100%;
   width: 100%;
   cursor: pointer;
   padding: 0;

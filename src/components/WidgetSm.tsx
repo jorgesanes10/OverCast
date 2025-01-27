@@ -27,6 +27,9 @@ export default function WidgetSm({
 }
 
 const StyledWidgetSm = styled.div`
+  height: 100%;
+  display: flex;
+
   div {
     text-align: left;
     display: flex;
@@ -35,6 +38,7 @@ const StyledWidgetSm = styled.div`
     color: #fff;
     background-color: #ffffff30;
     border-radius: 8px;
+    flex-grow: 1;
   }
 
   p {

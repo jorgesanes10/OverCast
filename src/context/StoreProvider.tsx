@@ -1,16 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { City, StoreContext } from './storeContext.ts';
-
-const formattedConditions: { [key: string]: string } = {
-  Clear: 'Clear',
-  Clouds: 'Cloudy',
-  Rain: 'Rainy',
-  Snow: 'Snowy',
-};
-
-const getFormattedCondition = (condition: string): string => {
-  return formattedConditions[condition];
-};
+import { getFormattedCondition } from '../utils';
 
 export default function StoreProvider({ children }: { children: ReactNode }) {
   const [unit, setUnit] = useState('imperial');
@@ -32,9 +22,7 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
 
   const toggleFavorite = (city: City) => {
     setFavorites((prevFavorites) => {
-      console.log(prevFavorites);
       if (!prevFavorites.find((favCity) => favCity.name === city.name)) {
-        console.log(city);
         return [...prevFavorites, city];
       }
 
