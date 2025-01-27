@@ -43,8 +43,6 @@ export default function Favorites() {
       )}
       <Grid2 container className="widgets-container">
         {cityQueries.map(({ data, isLoading }, index) => {
-          console.log('jajaja', data);
-
           if (!isLoading) {
             return (
               <Grid2
