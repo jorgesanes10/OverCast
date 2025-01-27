@@ -23,7 +23,7 @@ export default function WeatherReport() {
           lat: currentCity.lat,
           lon: currentCity.lon,
         },
-        unit || getPreferredUnitOfMeasurement(),
+        unit || getPreferredUnitOfMeasurement(window.navigator.language),
       );
     },
     enabled: !!currentCity.lat && !!currentCity.lon,

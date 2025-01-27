@@ -1,9 +1,7 @@
-export const getPreferredUnitOfMeasurement = () => {
+export const getPreferredUnitOfMeasurement = (currentLanguage: string) => {
   const imperialLanguages = ['en-US', 'en-LR', 'my-MM', 'en-MM'];
 
-  return imperialLanguages.includes(window.navigator.language)
-    ? 'imperial'
-    : 'metric';
+  return imperialLanguages.includes(currentLanguage) ? 'imperial' : 'metric';
 };
 
 export const convertUTCToLocalTime = (utc: number, timezoneOffset: number) => {
@@ -23,5 +21,5 @@ const formattedConditions: { [key: string]: string } = {
 };
 
 export const getFormattedCondition = (condition: string): string => {
-  return formattedConditions[condition];
+  return formattedConditions[condition] || 'Clear';
 };

@@ -8,12 +8,12 @@ interface HeaderProps {
   cleanData: () => void;
 }
 
-export default function Header({  cleanData }: HeaderProps) {
+export default function Header({ cleanData }: HeaderProps) {
   return (
-    <StyledHeader>
+    <header>
       <Grid2 container>
         <Grid2
-          size={{ xs: 12, sm: 4 }}
+          size={{ xs: 12, sm: 6 }}
           display="flex"
           alignItems="center"
           justifyContent={{
@@ -31,24 +31,19 @@ export default function Header({  cleanData }: HeaderProps) {
           </StyledLink>
         </Grid2>
         <Grid2
-          size={{ xs: 12, sm: 8 }}
+          size={{ xs: 12, sm: 6 }}
           display="flex"
           justifyContent={{
             xs: 'center',
             sm: 'flex-end',
           }}
         >
-          <Search  />
+          <Search />
         </Grid2>
       </Grid2>
-    </StyledHeader>
+    </header>
   );
 }
-
-const StyledHeader = styled.header`
-  //display: flex;
-  //justify-content: space-between;
-`;
 
 const StyledLink = styled(Link)`
   color: #fff;

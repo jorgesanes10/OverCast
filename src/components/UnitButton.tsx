@@ -16,7 +16,6 @@ export default function UnitButton({ cleanData }: UnitButtonProps) {
       color="inherit"
       onClick={() => {
         toggleUnit();
-
         if (cleanData) {
           cleanData();
         }

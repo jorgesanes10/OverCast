@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WidgetSm renders the component 1`] = `
+<div>
+  <div
+    aria-label="My aria label"
+    class="sc-KXCwU icEFEp widget"
+  >
+    <div
+      aria-hidden="true"
+    >
+      <p>
+        My icon
+         
+        My label
+      </p>
+      <p
+        class="value"
+      >
+        My value
+      </p>
+    </div>
+  </div>
+</div>
+`;
