@@ -44,7 +44,7 @@ interface WeatherWidgetProps {
 }
 
 export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
-  const { unit, favorites, toggleFavorite, conditions } =
+  const { unit, favorites, toggleFavorite, conditions, currentCity } =
     useContext(StoreContext);
 
   const degrees = `°${unit === 'imperial' ? 'F' : 'C'}`;
@@ -60,16 +60,26 @@ export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
           {city} ({info.country}){' '}
           <Button
             variant="text"
-            onClick={() => toggleFavorite(city)}
+            onClick={() =>
+              toggleFavorite({
+                name: currentCity.name,
+                lat: currentCity.lat,
+                lon: currentCity.lon,
+              })
+            }
             sx={{ color: '#fff' }}
             aria-label={
-              favorites.includes(city)
+              favorites.find((favCity) => favCity.name === currentCity.name)
                 ? 'Remove from favorites'
                 : 'Add to favorites'
             }
             data-testid="favorite-button"
           >
-            {favorites.includes(city) ? <Favorite /> : <FavoriteBorder />}
+            {favorites.find((favCity) => favCity.name === currentCity.name) ? (
+              <Favorite />
+            ) : (
+              <FavoriteBorder />
+            )}
           </Button>
         </PageTitle>
         <PageTitle style={{ marginTop: 0 }}>{conditions}</PageTitle>

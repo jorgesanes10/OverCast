@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from 'react';
-import { StoreContext } from './storeContext.ts';
+import { City, StoreContext } from './storeContext.ts';
 
 const formattedConditions: { [key: string]: string } = {
   Clear: 'Clear',
@@ -14,19 +14,11 @@ const getFormattedCondition = (condition: string): string => {
 
 export default function StoreProvider({ children }: { children: ReactNode }) {
   const [unit, setUnit] = useState('imperial');
-  const [searchHistory, setSearchHistory] = useState<string[]>(
-    JSON.parse(localStorage.getItem('search-history') || '[]') || [],
-  );
-  const [favorites, setFavorites] = useState<string[]>(
+  const [favorites, setFavorites] = useState<City[]>(
     JSON.parse(localStorage.getItem('favorites') || '[]') || [],
   );
   const [conditions, setConditionsState] = useState('Clear');
-
-  useEffect(() => {
-    if (searchHistory.length > 0) {
-      localStorage.setItem('search-history', JSON.stringify(searchHistory));
-    }
-  }, [searchHistory]);
+  const [currentCity, setCurrentCity] = useState({});
 
   useEffect(() => {
     if (favorites.length > 0) {
@@ -38,23 +30,15 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
     setUnit((prevUnit) => (prevUnit === 'imperial' ? 'metric' : 'imperial'));
   };
 
-  const addToSearchHistory = (term: string) => {
-    setSearchHistory((prevSearchHistory) => {
-      if (!prevSearchHistory.includes(term)) {
-        return [...prevSearchHistory, term];
-      }
-
-      return [...prevSearchHistory];
-    });
-  };
-
-  const toggleFavorite = (city: string) => {
+  const toggleFavorite = (city: City) => {
     setFavorites((prevFavorites) => {
-      if (!prevFavorites.includes(city)) {
+      console.log(prevFavorites);
+      if (!prevFavorites.find((favCity) => favCity.name === city.name)) {
+        console.log(city);
         return [...prevFavorites, city];
       }
 
-      return prevFavorites.filter((item) => item !== city);
+      return prevFavorites.filter((item) => item.name !== city.name);
     });
   };
 
@@ -67,12 +51,12 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
       value={{
         unit,
         toggleUnit,
-        searchHistory,
-        addToSearchHistory,
         favorites,
         toggleFavorite,
         conditions,
         setConditions,
+        currentCity: currentCity as City,
+        setCurrentCity,
       }}
     >
       {children}

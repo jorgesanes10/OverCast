@@ -1,9 +1,10 @@
-import { Button, TextField } from '@mui/material';
+import { Button, CircularProgress, TextField } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from 'react';
 import { StoreContext } from '../context/storeContext.ts';
+import { useQuery } from '@tanstack/react-query';
+import { fetchCitiesByName } from '../api';
 
 interface SearchFormProps {
   searchValue: string;
@@ -12,13 +13,19 @@ interface SearchFormProps {
 }
 
 export default function SearchForm({
-  searchValue,
   onSearchChange,
   onFormSubmit,
 }: SearchFormProps) {
-  const { searchHistory } = useContext(StoreContext);
-  const [historyToDisplay, setHistoryToDisplay] = useState(searchHistory);
+  const [searchValue, setSearchValue] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const { setCurrentCity } = useContext(StoreContext);
+
+  const { data, isFetching } = useQuery({
+    queryKey: [searchValue],
+    queryFn: async () => {
+      return await fetchCitiesByName(searchValue);
+    },
+  });
 
   useEffect(() => {
     document.body.addEventListener('click', hideDropdown, true);
@@ -41,27 +48,46 @@ export default function SearchForm({
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     const searchTerm = event.target.value;
 
+    setSearchValue(searchTerm);
+
     if (onSearchChange) {
       onSearchChange(event);
     }
-
-    const newHistoryToDisplay = searchHistory.filter((item) =>
-      item.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-
-    setHistoryToDisplay(newHistoryToDisplay);
   };
 
-  const renderSearchHistory = () =>
-    historyToDisplay.map((city) => (
-      <Link
-        data-testid={`history-item-${city}`}
-        key={city}
-        to={`/?city=${city}`}
-      >
-        {city}
-      </Link>
-    ));
+  type CitiesResponse = {
+    properties: {
+      placeId: string;
+      city: string;
+      lat: number;
+      lon: number;
+      country: string;
+    };
+  };
+
+  const renderCities = () => {
+    if (data.features) {
+      return data.features.map(({ properties }: CitiesResponse) => (
+        <Button
+          sx={{
+            color: '#fff',
+          }}
+          key={properties.placeId}
+          onClick={() =>
+            setCurrentCity({
+              name: properties.city,
+              lat: properties.lat,
+              lon: properties.lon,
+            })
+          }
+        >
+          {properties.city}, {properties.country}
+        </Button>
+      ));
+    }
+  };
+
+  console.log(data);
 
   return (
     <StyledForm onSubmit={onFormSubmit}>
@@ -92,13 +118,12 @@ export default function SearchForm({
           'data-testid': 'search-field',
         }}
       />
-      {searchHistory.length > 0 && (
+      {data && data.features && (
         <StyledDropdown
           data-keepdropdown="true"
           className={`${dropdownVisible ? 'dropdown-visible' : ''}`}
         >
-          <StyledHistoryHeader>SEARCH HISTORY</StyledHistoryHeader>
-          {renderSearchHistory()}
+          <>{isFetching ? <CircularProgress /> : renderCities()}</>
         </StyledDropdown>
       )}
       <Button
@@ -158,10 +183,10 @@ const StyledDropdown = styled.div`
   position: absolute;
   background-color: #11111180;
   top: 100%;
-  width: 89%;
+  width: 100%;
   z-index: 10;
   border-radius: 8px;
-  padding: 16px;
+  padding: 16px 0;
 
   @supports (-webkit-backdrop-filter: blur(7px)) {
     -webkit-backdrop-filter: blur(7px);
@@ -186,11 +211,4 @@ const StyledDropdown = styled.div`
   a:hover {
     text-decoration: underline;
   }
-`;
-
-const StyledHistoryHeader = styled.p`
-  color: #fff;
-  opacity: 0.7;
-  margin-top: 0;
-  margin-bottom: 8px;
 `;

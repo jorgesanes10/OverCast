@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { StoreContext } from '../context/storeContext.ts';
-import { Link } from 'react-router-dom';
+import { City, StoreContext } from '../context/storeContext.ts';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useQueries } from '@tanstack/react-query';
 import { fetchWeatherData } from '../api';
@@ -10,20 +10,21 @@ import { Grid2 } from '@mui/material';
 import UnitButton from '../components/UnitButton.tsx';
 
 export default function Favorites() {
-  const { favorites, unit, conditions } = useContext(StoreContext);
+  const { favorites, unit, conditions, setCurrentCity } =
+    useContext(StoreContext);
+
+  const navigate = useNavigate();
 
   const degrees = `°${unit === 'imperial' ? 'F' : 'C'}`;
 
   const cityQueries = useQueries({
-    queries: favorites.map((city) => {
+    queries: favorites.map((city: City) => {
       return {
         queryKey: ['user', city, unit],
-        queryFn: () => fetchWeatherData(city, unit),
+        queryFn: () => fetchWeatherData({ lat: city.lat, lon: city.lon }, unit),
       };
     }),
   });
-
-  console.log(cityQueries[0]);
 
   return (
     <main className="loaded">
@@ -49,9 +50,18 @@ export default function Favorites() {
                 key={`favorite-${index}`}
                 sx={{ padding: '5px' }}
               >
-                <WidgetLink
-                  to={`/?city=${data.name}`}
+                <StyledButton
                   data-testid={`favorite-link-${data.name}`}
+                  // sx={{ padding: 0 }}
+                  onClick={() => {
+                    setCurrentCity({
+                      name: data.name,
+                      lat: data.coord.lat,
+                      lon: data.coord.lon,
+                    });
+
+                    navigate('/');
+                  }}
                 >
                   <WidgetSm
                     label={`${data.name} (${conditions})`}
@@ -63,7 +73,7 @@ export default function Favorites() {
                     icon={<Thermostat />}
                     ariaLabel={`${data.name} `}
                   />
-                </WidgetLink>
+                </StyledButton>
               </Grid2>
             );
           }
@@ -87,14 +97,9 @@ const StyledHeader = styled.header`
   }
 `;
 
-const WidgetLink = styled(Link)`
-  text-decoration: none;
-
-  div {
-    transition: transform 0.2s ease-out;
-  }
-
-  &:hover div {
-    transform: scale(1.04);
-  }
+const StyledButton = styled.button`
+  all: unset;
+  width: 100%;
+  cursor: pointer;
+  padding: 0;
 `;

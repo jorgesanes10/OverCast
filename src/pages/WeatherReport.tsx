@@ -7,26 +7,29 @@ import { convertUTCToLocalTime, getPreferredUnitOfMeasurement } from '../utils';
 import styled from 'styled-components';
 import Header from '../components/Header.tsx';
 import { StoreContext } from '../context/storeContext.ts';
-import { useLocation } from 'react-router';
 
 export default function WeatherReport() {
-  const location = useLocation();
-
   const [searchValue, setSearchValue] = useState('');
   const [searchNow, setSearchNow] = useState(false);
 
   const [currentData, setCurrentData] =
     useState<Awaited<ReturnType<typeof fetchWeatherData>>>();
 
-  const { unit, addToSearchHistory, conditions, setConditions } =
+  const { unit, conditions, setConditions, currentCity } =
     useContext(StoreContext);
 
+  console.log('Current city', currentCity);
+
   const { data, isFetching } = useQuery({
-    queryKey: [searchValue, unit],
+    queryKey: [currentCity.lat, currentCity.lon, unit],
     queryFn: async () => {
+      console.log('Querying');
       setSearchNow(false);
       return await fetchWeatherData(
-        searchValue,
+        {
+          lat: currentCity.lat,
+          lon: currentCity.lon,
+        },
         unit || getPreferredUnitOfMeasurement(),
       );
     },
@@ -37,7 +40,6 @@ export default function WeatherReport() {
     if (data && data.cod === 200) {
       setCurrentData(data);
       setConditions(data.weather[0].main);
-      addToSearchHistory(searchValue);
     }
   }, [data, searchValue]);
 
@@ -46,9 +48,8 @@ export default function WeatherReport() {
   }, [conditions]);
 
   useEffect(() => {
-    setSearchValue(location.search.split('?city=')[1] || '');
     setSearchNow(true);
-  }, [location]);
+  }, [currentCity.lat]);
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchNow(false);
