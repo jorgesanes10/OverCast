@@ -49,6 +49,11 @@ export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
 
   const degrees = `°${unit === 'imperial' ? 'F' : 'C'}`;
 
+  const isFavorite = favorites.find(
+    (favCity) =>
+      favCity.lat === currentCity.lat && favCity.lon === currentCity.lon,
+  );
+
   return (
     <section>
       <article>
@@ -69,17 +74,11 @@ export default function WeatherWidget({ city, info }: WeatherWidgetProps) {
             }
             sx={{ color: '#fff' }}
             aria-label={
-              favorites.find((favCity) => favCity.name === currentCity.name)
-                ? 'Remove from favorites'
-                : 'Add to favorites'
+              isFavorite ? 'Remove from favorites' : 'Add to favorites'
             }
             data-testid="favorite-button"
           >
-            {favorites.find((favCity) => favCity.name === currentCity.name) ? (
-              <Favorite />
-            ) : (
-              <FavoriteBorder />
-            )}
+            {isFavorite ? <Favorite /> : <FavoriteBorder />}
           </Button>
         </PageTitle>
         <PageTitle style={{ marginTop: 0 }}>{conditions}</PageTitle>

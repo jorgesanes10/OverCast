@@ -63,30 +63,37 @@ export default function Search() {
       lat: number;
       lon: number;
       country: string;
+      country_code: string;
     };
   };
 
   const renderCities = () => {
     if (data.features) {
       return data.features.map(
-        ({ properties }: CitiesResponse, index: number) => (
-          <Button
-            sx={{
-              color: '#fff',
-            }}
-            key={`${properties.placeId}-${index}`}
-            data-testid={`cities-result-${index}`}
-            onClick={() =>
-              setCurrentCity({
-                name: properties.city,
-                lat: properties.lat,
-                lon: properties.lon,
-              })
-            }
-          >
-            {properties.city}, {properties.country}
-          </Button>
-        ),
+        ({ properties }: CitiesResponse, index: number) => {
+          if (!properties.city) {
+            return null;
+          }
+
+          return (
+            <Button
+              sx={{
+                color: '#fff',
+              }}
+              key={`${properties.placeId}-${index}`}
+              data-testid={`cities-result-${index}`}
+              onClick={() =>
+                setCurrentCity({
+                  name: `${properties.city}, ${properties.country_code}`,
+                  lat: Math.trunc(properties.lat * 10000) / 10000,
+                  lon: Math.trunc(properties.lon * 10000) / 10000,
+                })
+              }
+            >
+              {properties.city}, {properties.country}
+            </Button>
+          );
+        },
       );
     }
   };

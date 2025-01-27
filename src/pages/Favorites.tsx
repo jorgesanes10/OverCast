@@ -54,7 +54,7 @@ export default function Favorites() {
                   data-testid={`favorite-item-${data.name}`}
                   onClick={() => {
                     setCurrentCity({
-                      name: data.name,
+                      name: `${data.name}, ${data.sys.country.toLowerCase()}`,
                       lat: data.coord.lat,
                       lon: data.coord.lon,
                     });
@@ -63,7 +63,7 @@ export default function Favorites() {
                   }}
                 >
                   <WidgetSm
-                    label={`${data.name} (${getFormattedCondition(data.weather[0].main)})`}
+                    label={`${data.name}, ${data.sys.country} (${getFormattedCondition(data.weather[0].main)})`}
                     value={
                       <>
                         {data.main.temp} <small>{degrees}</small>

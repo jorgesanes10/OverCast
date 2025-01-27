@@ -17,9 +17,9 @@ export default function WidgetSm({
   return (
     <StyledWidgetSm aria-label={ariaLabel} className="widget">
       <div aria-hidden>
-        <p>
+        <StyledTitle>
           {icon} {label}
-        </p>
+        </StyledTitle>
         <p className="value">{value}</p>
       </div>
     </StyledWidgetSm>
@@ -57,4 +57,8 @@ const StyledWidgetSm = styled.div`
     position: relative;
     top: 5px;
   }
+`;
+
+const StyledTitle = styled.p`
+  flex-grow: 1;
 `;
