@@ -10,6 +10,7 @@ you'll get nice widgets with helpful weather data.
 - You can choose units in the Imperial or Metric systems
 - You can add and remove cities from Favorites, which get persisted
 - The background of the app changes according to the current city's weather conditions.
+- The widget lists have a nice animation when loading
 - The app is 100% keyboard-navigable and has accessibility practices
 - The app as a responsive design
 
