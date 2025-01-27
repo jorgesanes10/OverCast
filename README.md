@@ -13,6 +13,8 @@ you'll get nice widgets with helpful weather data.
 - The app is 100% keyboard-navigable and has accessibility practices
 - The app as a responsive design
 
+Caveat: The app uses one API to get the cities, takes the coordinates and feed them to another API to get the weather conditions of the given coordinates. Each API differs in terms of location names and coordinates, thus you might see inconsistencies in the city names
+
 ## Development features
 
 - Unit tests for small components using jest and React Testing Library
